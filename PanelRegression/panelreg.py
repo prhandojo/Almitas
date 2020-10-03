@@ -38,6 +38,17 @@ cef.result(
         )
 cef.summary()
 
+cef = CEFpanelreg(filename)
+cef.result(
+        start_datetime = '2000-01-01',
+        end_datetime = '2012-01-01',
+        y = ['cd'],
+        var_pit = [['cd',1], ['tomaturity',1], ['age', 1]],
+        var_norm = [['volume',1,10,'std'],['cd',1,10,'mean'],['cd',1,10,'std']],
+        fix = ['assetclasslevel3'],
+        cluster = ['year','ticker']
+        )
+cef.summary()
 
 """
 

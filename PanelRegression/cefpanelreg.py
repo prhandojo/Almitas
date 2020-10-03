@@ -49,6 +49,7 @@ class CEFpanelreg:
         self.data['year'] = pd.DatetimeIndex(self.data['date']).year
         self.data['month'] = pd.DatetimeIndex(self.data['date']).month
         self.data['inceptiondate'] = pd.to_datetime(self.data['inceptiondate'])
+        self.data['terminationdate'] = pd.to_datetime(self.data['terminationdate'])
         self.data = self.data.drop_duplicates(subset=['ticker','date'],keep='last')
         
         # check valid lags, drop later before regression
@@ -60,6 +61,11 @@ class CEFpanelreg:
         
         # age
         self.data['age'] = (self.data['date']-self.data['inceptiondate']).dt.days
+        self.data['age'] = np.log(self.data['age'])
+        
+        # time to maturity
+        self.data['tomaturity'] = (self.data['terminationdate']-self.data['date']).dt.days
+        self.data['tomaturity'] = np.log(self.data['tomaturity'])
         
         # column reference
         c = len(self.data.columns)
@@ -159,7 +165,7 @@ class CEFpanelreg:
         self.data['valid'] = self.data['dif']<lim
         #self.data['valid'] = [d<limit for d in self.data['dif']]
         self.data.drop(['dif'], axis=1, inplace=True)
-        
+
     def __fitreg(self,
                  dt,
                  start_datetime,
@@ -191,21 +197,26 @@ class CEFpanelreg:
         if len(fix) == 0 and len(cluster) == 0:
             mod = PanelOLS.from_formula(y[0] + '~1+' + x, data = dt)
             fit1 = mod.fit(cov_type = 'clustered', cluster_time = False, cluster_entity = False)
+            print(fit1)
             return fit1
         
         if len(fix) == 1:
             mod = PanelOLS.from_formula(y[0] + '~1+' + x + '+' + fix[0], data = dt)
             if len(cluster) == 0:
                 fit1 = mod.fit(cov_type = 'clustered', cluster_time = False, cluster_entity = False)
+                print(fit1)
                 return fit1
             elif cluster == ['year']:
                 fit1 = mod.fit(cov_type = 'clustered', cluster_time = True, cluster_entity = False)
+                print(fit1)
                 return fit1
             elif cluster == ['ticker']:
                 fit1 = mod.fit(cov_type = 'clustered', cluster_time = False, cluster_entity = True)
+                print(fit1)
                 return fit1
             elif cluster == ['year','ticker'] or cluster == ['ticker','year']:
                 fit1 = mod.fit(cov_type = 'clustered', cluster_time = True, cluster_entity = True)
+                print(fit1)
                 return fit1
             else:
                 raise KeyError("Please choose either year or ticker, or both.")
