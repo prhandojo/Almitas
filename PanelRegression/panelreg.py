@@ -13,6 +13,7 @@ STEP1: Input file name
 """
 
 filename = 'US_data.csv'
+filename = 'merged.csv'
 
 """
 STEP2: Input parameters for regression
@@ -40,11 +41,11 @@ cef.summary()
 
 cef = CEFpanelreg(filename)
 cef.result(
-        start_datetime = '2000-01-01',
-        end_datetime = '2012-01-01',
+        start_datetime = '2013-01-01',
+        end_datetime = '2016-12-31',
         y = ['cd'],
-        var_pit = [['cd',1], ['tomaturity',1], ['age', 1]],
-        var_norm = [['volume',1,10,'std'],['cd',1,10,'mean'],['cd',1,10,'std']],
+        var_pit = [['cd',1], ['tomaturity',1]],
+        var_norm = [['volume',1,22,'mean'],['cd',1,10,'mean'],['pd',1,22,'mean']],
         fix = ['assetclasslevel3'],
         cluster = ['year','ticker']
         )

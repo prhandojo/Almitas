@@ -24,7 +24,7 @@ class CEFpanelreg:
         print('Importing data...')
         data = pd.read_csv(self.filename, index_col = 0)
         data.columns = [x.lower() for x in data.columns]
-        data['date'] = pd.to_datetime(data['date'])
+        data['date'] = pd.to_datetime(data['date'])        
         print('Import success')
         self.data = data
         self.sumstat = {}
